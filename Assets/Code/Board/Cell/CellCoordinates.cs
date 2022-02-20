@@ -38,5 +38,10 @@
         {
             return $"{X}:{Y}";
         }
+        
+        public static CellCoordinates CellIndexToCoords(int index, int boardWidth)
+        {
+            return new CellCoordinates(index % boardWidth, index / boardWidth);
+        }
     }
 }

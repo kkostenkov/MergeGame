@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Merge.Session;
 using Merge.Storage;
 
 namespace Merge.Board
 {
     public interface IGameBoard
     {
-        //(int, int) GetSize();
+        (int, int) GetSize();
         //CellData GetCell(CellCoordinates coordinates);
         //void ProcessCellSelection(CellCoordinates coordinates);
     }
@@ -22,8 +23,9 @@ namespace Merge.Board
 
     public interface IGameBoardEventsSource
     {
+        event EventHandler BoardReset;
         //event EventHandler CoordsClicked;
-        event EventHandler PieceSpawned;
+        event EventHandler<PieceSpawnedArgs> PieceSpawned;
         //event EventHandler PieceDestroyed;
         //event EventHandler PieceEvolved;
     }
@@ -41,7 +43,8 @@ namespace Merge.Board
             new Dictionary<CellCoordinates, CellInstance>();
         private readonly HashSet<CellCoordinates> emptyCells = new HashSet<CellCoordinates>();
 
-        public event EventHandler PieceSpawned;
+        public event EventHandler BoardReset;
+        public event EventHandler<PieceSpawnedArgs> PieceSpawned;
         
         public GameBoard(IDataStorage dataStorage, IPieceFactory pieceFactory, IRandomProvider random)
         {
@@ -49,14 +52,22 @@ namespace Merge.Board
             this.pieceFactory = pieceFactory;
             this.random = random;
         }
+        
+#region IGameBoard
+        public (int, int) GetSize()
+        {
+            return (data.Width, data.Height);
+        }
+#endregion
 
+#region IGameBoardDIrector
         void IGameBoardDirector.PrepareNewSession(string sessionSettingsId)
         {
             RemoveAllPieces();
             var sessionSettings = dataStorage.GetSessionSettings(sessionSettingsId);
             
             InitBoard(sessionSettings);
-            
+            BoardReset?.Invoke(this, EventArgs.Empty);
             SpawnStartingPieces(sessionSettings.StartingPieces);
         }
 
@@ -64,6 +75,7 @@ namespace Merge.Board
         {
             
         }
+#endregion
 
         private void RemoveAllPieces()
         {

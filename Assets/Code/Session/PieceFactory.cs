@@ -2,7 +2,7 @@
 using Merge.Board;
 using Merge.Storage;
 
-namespace Merge
+namespace Merge.Session
 {
     public interface IPieceFactory
     {

@@ -2,7 +2,7 @@
 
 namespace Merge.Board
 {
-    internal class PieceSpawnedArgs : EventArgs
+    public class PieceSpawnedArgs : EventArgs
     {
         public CellCoordinates Coords;
     }
