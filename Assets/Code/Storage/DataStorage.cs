@@ -16,51 +16,15 @@ namespace Merge.Storage
     {
         public void LoadData()
         {
-            var mockLoadedSessionData = new SessionSettings[]
-            {
-                new SessionSettings()
-                {
-                    Id = SessionConstants.FIRST_SESSION_SETTINGS_ID,
-                    BoardData = new BoardData()
-                    {
-                        Id = "7by7",
-                        Height = 7,
-                        Width = 7,
-                    },
-                    StartingPieces = new[]
-                    {
-                        new PieceData()
-                        {
-                            Id = "B_3"
-                        }
-                    }
-                }
-            };
-
+            var mockLoadedSessionData = MockDataSource.GetSessionData();
             sessionSettings = mockLoadedSessionData.ToDictionary(d => d.Id);
 
-            var mockLoadedPieceData = new PieceData[]
-            {
-                new PieceData()
-                {
-                    Id = "B_3",
-                    ViewSettingsId = "B_3"
-                    
-                }
-            };
+
+            var mockLoadedPieceData = MockDataSource.GetPieceData();
             pieces = mockLoadedPieceData.ToDictionary(p => p.Id);
 
-            pieceViewSettings = new Dictionary<string, PieceViewSettings>()
-            {
-                {
-                    "B_3",
-                    new PieceViewSettings()
-                    {
-                        Color = "#102030FF",
-                        Codename = "B_3"
-                    }
-                }
-            };
+            
+            pieceViewSettings = MockDataSource.GetPieceViewSettings();
         }
 
         private Dictionary<string, SessionSettings> sessionSettings;

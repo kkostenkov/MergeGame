@@ -42,6 +42,7 @@ namespace Merge.Board
         private readonly Dictionary<CellCoordinates, CellInstance> cells = 
             new Dictionary<CellCoordinates, CellInstance>();
         private readonly HashSet<CellCoordinates> emptyCells = new HashSet<CellCoordinates>();
+        private List<IUpdatable> updatables = new List<IUpdatable>(); 
 
         public event EventHandler BoardReset;
         public event EventHandler<PieceSpawnedArgs> PieceSpawned;
@@ -73,7 +74,10 @@ namespace Merge.Board
 
         public void CustomUpdate(float deltaTime)
         {
-            
+            foreach (var updatable in updatables)
+            {
+                updatable.CustomUpdate(deltaTime);
+            }
         }
 #endregion
 
@@ -129,6 +133,7 @@ namespace Merge.Board
                 Coords = selectedCoords,
                 Piece = piece
             };
+            updatables.Add(piece);
             PieceSpawned?.Invoke(this,  eventArgs);
         }
 

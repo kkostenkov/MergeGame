@@ -29,7 +29,7 @@ namespace Merge.Session
             gameBoard = new GameBoard(dataStorage, pieceFactory, random);
             currentSessionSettingsId = SessionConstants.FIRST_SESSION_SETTINGS_ID;
 
-            boardView.Init((IGameBoard)gameBoard, (IGameBoardEventsSource) gameBoard, dataStorage);
+            boardView.Init(gameBoard, gameBoard, dataStorage);
 
         }
 
