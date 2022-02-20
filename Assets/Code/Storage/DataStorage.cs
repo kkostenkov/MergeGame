@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Merge.Board;
+using UnityEngine;
 
 namespace Merge.Storage
 {
@@ -8,6 +9,7 @@ namespace Merge.Storage
     {
         SessionSettings GetSessionSettings(string sessionSettingsId);
         PieceData GetPiece(string pieceDataId);
+        PieceViewSettings GetPieceViewSettings(string pieceViewSettingsId);
     }
         
     public class DataStorage : IDataStorage
@@ -25,13 +27,13 @@ namespace Merge.Storage
                         Height = 7,
                         Width = 7,
                     },
-                    StartingPieces = new []
+                    StartingPieces = new[]
                     {
                         new PieceData()
                         {
                             Id = "B_3"
                         }
-                    } 
+                    }
                 }
             };
 
@@ -41,12 +43,26 @@ namespace Merge.Storage
             {
                 new PieceData()
                 {
-                    Id = "B_3"
+                    Id = "B_3",
+                    ViewSettingsId = "B_3"
+                    
                 }
             };
             pieces = mockLoadedPieceData.ToDictionary(p => p.Id);
+
+            pieceViewSettings = new Dictionary<string, PieceViewSettings>()
+            {
+                {
+                    "B_3",
+                    new PieceViewSettings()
+                    {
+                        Color = "#102030FF",
+                        Codename = "B_3"
+                    }
+                }
+            };
         }
-        
+
         private Dictionary<string, SessionSettings> sessionSettings;
         public SessionSettings GetSessionSettings(string sessionSettingsId)
         {
@@ -58,6 +74,16 @@ namespace Merge.Storage
         public PieceData GetPiece(string pieceDataId)
         {
             return pieces[pieceDataId];
+        }
+
+        private Dictionary<string, PieceViewSettings> pieceViewSettings;
+        public PieceViewSettings GetPieceViewSettings(string id)
+        {
+            if (!pieceViewSettings.TryGetValue(id, out var settings))
+            {
+                Debug.LogError($"[Storage][PieceViewSettings] missing {id}");
+            }
+            return settings;
         }
     }
 }

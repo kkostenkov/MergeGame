@@ -2,6 +2,8 @@
 {
     public class PieceInstance
     {
+        public string ViewSettingsId => data.ViewSettingsId;
+        
         private PieceData data; 
         private PieceInstanceData instanceData;
         

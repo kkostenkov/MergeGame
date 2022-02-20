@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Merge.Board;
+using Merge.Storage;
 using Merge.Views.Cell;
 using Merge.Views.Piece;
 using UnityEngine;
@@ -14,13 +15,16 @@ namespace Merge.Views.Board
 
         private IGameBoard gameBoard;
         private IGameBoardEventsSource gameBoardEventsSource;
+        private IDataStorage dataStorage;
 
         private Dictionary<CellCoordinates, CellView> CellViews = new Dictionary<CellCoordinates, CellView>();
 
-        public void Init(IGameBoard gameBoard, IGameBoardEventsSource gameBoardEventsSource)
+        public void Init(IGameBoard gameBoard, IGameBoardEventsSource gameBoardEventsSource,
+            IDataStorage dataStorage)
         {
             this.gameBoard = gameBoard;
             this.gameBoardEventsSource = gameBoardEventsSource;
+            this.dataStorage = dataStorage;
             Subscribe();
         }
 
@@ -56,7 +60,7 @@ namespace Merge.Views.Board
         private void GameBoardEventsSourceOnPieceSpawned(object sender, PieceSpawnedArgs e)
         {
             var cellView = CellViews[e.Coords];
-            cellView.SpawnPiece();
+            cellView.SpawnPiece(e.Piece);
         }
         
         public void CustomUpdate(float deltaTime)
@@ -80,7 +84,7 @@ namespace Merge.Views.Board
                     cellPrefab, Vector3.zero, Quaternion.identity, spawnRoot);
                 var currentViewIndex = CellViews.Count + 1;
                 var coords = CellCoordinates.CellIndexToCoords(currentViewIndex, width);
-                cellView.Init(coords);
+                cellView.Init(coords, dataStorage);
                 CellViews[coords] = cellView;
             }
             // TODO: hide excessive/show needed

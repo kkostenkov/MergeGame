@@ -124,7 +124,11 @@ namespace Merge.Board
             emptyCells.Remove(selectedCoords);
             var selectedCell = cells[selectedCoords];
             selectedCell.PlacePiece(piece);
-            var eventArgs = new PieceSpawnedArgs() {Coords = selectedCoords};
+            var eventArgs = new PieceSpawnedArgs()
+            {
+                Coords = selectedCoords,
+                Piece = piece
+            };
             PieceSpawned?.Invoke(this,  eventArgs);
         }
 

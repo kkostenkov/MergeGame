@@ -1,4 +1,5 @@
 ﻿using Merge.Board;
+using Merge.Storage;
 using Merge.Views.Piece;
 using UnityEngine;
 
@@ -11,12 +12,15 @@ namespace Merge.Views.Cell
         [SerializeField] 
         private PieceView piecePrefab;
 
+        private IDataStorage dataStorage;
         private CellCoordinates coords;
         private PieceView pieceView;
+        
 
-        public void Init(CellCoordinates coords)
+        public void Init(CellCoordinates coords, IDataStorage dataStorage)
         {
             this.coords = coords;
+            this.dataStorage = dataStorage;
         }
         
         public void ClearPiece()
@@ -28,19 +32,23 @@ namespace Merge.Views.Cell
             }
         }
 
-        public void SpawnPiece()
+        public void SpawnPiece(PieceInstance piece)
         {
             if (pieceView)
             {
                 if (pieceView.gameObject.activeSelf)
                 {
-                    Debug.LogError($"cell {coords} is already occupied. Can't spawn");    
+                    Debug.LogError($"cell {coords} is already occupied. Can't spawn");
                 }
                 pieceView.gameObject.SetActive(true);
-                return;
+            }
+            else
+            {
+                pieceView = GameObject.Instantiate(piecePrefab, cachedTransform);
+                pieceView.Init(dataStorage);    
             }
 
-            pieceView = GameObject.Instantiate(piecePrefab, cachedTransform);
+            pieceView.SetInstance(piece);
         }
     }
 }
