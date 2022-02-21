@@ -25,6 +25,16 @@
         {
             return X == other.X && Y == other.Y;
         }
+        
+        public static bool operator !=(CellCoordinates a, CellCoordinates b)
+        {
+            return !(a == b);
+        }
+
+        public static bool operator ==(CellCoordinates a, CellCoordinates b)
+        {
+            return a.Equals(b);
+        }
 
         public override int GetHashCode()
         {

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Merge.Board.Abilities;
+using Merge.Board.Abilities.Effects;
 using Merge.Session;
 using Merge.Storage;
 
@@ -19,6 +21,7 @@ namespace Merge.Board
         //object GetSessionSnapshot();
         //void LoadGame(object snapshot);
         void CustomUpdate(float deltaTime);
+        void ApplyEffect(Effect pendingEffect);
     }
 
     public interface IGameBoardEventsSource
@@ -42,7 +45,9 @@ namespace Merge.Board
         private readonly Dictionary<CellCoordinates, CellInstance> cells = 
             new Dictionary<CellCoordinates, CellInstance>();
         private readonly HashSet<CellCoordinates> emptyCells = new HashSet<CellCoordinates>();
-        private List<IUpdatable> updatables = new List<IUpdatable>(); 
+        private List<IUpdatable> updatables = new List<IUpdatable>();
+
+        private Queue<ICanGenerateEffect> pendingEffects = new Queue<ICanGenerateEffect>();
 
         public event EventHandler BoardReset;
         public event EventHandler<PieceSpawnedArgs> PieceSpawned;
@@ -78,8 +83,34 @@ namespace Merge.Board
             {
                 updatable.CustomUpdate(deltaTime);
             }
+
+            while (pendingEffects.Count > 0)
+            {
+                var effect = pendingEffects.Dequeue().GenerateEffect();
+                ((IGameBoardDirector) this).ApplyEffect(effect);
+            }
         }
-#endregion
+
+        void IGameBoardDirector.ApplyEffect(Effect effect)
+        {
+            switch (effect)
+            {
+                case SpawnPieceEffect spawnEffect:
+                {
+                    var pieceData = dataStorage.GetPiece(spawnEffect.Id);
+                    var newPiece = pieceFactory.Create(pieceData, pendingEffects);
+                    PlacePiece(newPiece);
+                    break;
+                }
+                case NoneEffect none:
+                default:
+                {
+                    break;
+                }
+            }
+        }
+
+        #endregion
 
         private void RemoveAllPieces()
         {
@@ -115,7 +146,7 @@ namespace Merge.Board
 
         private void SpawnStartingPieces(PieceData[] piecesData)
         {
-            var newPieces = pieceFactory.Create(piecesData);
+            var newPieces = pieceFactory.Create(piecesData, pendingEffects);
             foreach (var piece in newPieces)
             {
                 PlacePiece(piece);
@@ -125,6 +156,10 @@ namespace Merge.Board
         private void PlacePiece(PieceInstance piece)
         {
             var selectedCoords = GetEmptyCoordinates();
+            if (selectedCoords.IsInvalid())
+            {
+                return;
+            }
             emptyCells.Remove(selectedCoords);
             var selectedCell = cells[selectedCoords];
             selectedCell.PlacePiece(piece);
@@ -139,6 +174,10 @@ namespace Merge.Board
 
         private CellCoordinates GetEmptyCoordinates()
         {
+            if (emptyCells.Count < 1)
+            {
+                return SessionConstants.InvalidCoords;
+            }
             return emptyCells.ElementAt(random.Next(emptyCells.Count));
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Merge.Board;
 
 namespace Merge
 {
@@ -9,7 +10,12 @@ namespace Merge
             if (val.CompareTo(min) < 0) return min;
             else if(val.CompareTo(max) > 0) return max;
             else return val;
-        }    
+        }
+
+        public static bool IsInvalid(this CellCoordinates coords)
+        {
+            return SessionConstants.InvalidCoords == coords;
+        }
     }
     
     

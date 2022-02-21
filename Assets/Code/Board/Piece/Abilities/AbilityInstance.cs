@@ -1,19 +1,25 @@
-﻿using Merge.Board.Conditions;
+﻿using System.Collections.Generic;
+using Merge.Board.Abilities.Effects;
+using Merge.Board.Conditions;
 using Merge.Session;
 
 namespace Merge.Board.Abilities
 {
-    public class AbilityInstance : IUpdatable
+    public class AbilityInstance : IUpdatable, ICanGenerateEffect
     {
         protected AbilityData Data;
         protected AbilityInstanceData InstanceData;
+        protected bool IsAbilityReady { get; set; }
+        private Queue<ICanGenerateEffect> pendingEffects;
 
         private float activationWaitingTime;
         
-        public AbilityInstance(AbilityData data, AbilityInstanceData instanceData)
+        public AbilityInstance(AbilityData data, AbilityInstanceData instanceData, 
+            Queue<ICanGenerateEffect> pendingEffects)
         {
             this.Data = data;
             this.InstanceData = instanceData;
+            this.pendingEffects = pendingEffects;
         }
 
         public virtual void CustomUpdate(float deltaTime)
@@ -23,7 +29,11 @@ namespace Merge.Board.Abilities
                 activationWaitingTime += deltaTime;
             }
 
-            var ready = CheckIfAbilityIsReady();
+            IsAbilityReady = CheckActivationRequirements(); 
+            if (IsAbilityReady)
+            {
+                pendingEffects.Enqueue(this);
+            }
         }
 
         protected virtual bool CheckActivationRequirements()
@@ -32,11 +42,9 @@ namespace Merge.Board.Abilities
                 && activationWaitingTime >= activationTimerCondition.IntervalSeconds;
         }
 
-        public bool CheckIfAbilityIsReady()
+        public virtual Effect GenerateEffect()
         {
-            var ready = CheckActivationRequirements();
-            return ready;
-
+            return Effect.None;
         }
     }
 }

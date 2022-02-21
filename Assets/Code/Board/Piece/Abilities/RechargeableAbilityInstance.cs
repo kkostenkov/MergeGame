@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using Merge.Board.Abilities.Effects;
 using Merge.Board.Conditions;
+using Merge.Session;
 
 namespace Merge.Board.Abilities
 {
@@ -9,8 +12,8 @@ namespace Merge.Board.Abilities
         protected new RechargeableAbilityInstanceData InstanceData => 
             base.InstanceData as RechargeableAbilityInstanceData;
 
-        public RechargeableAbilityInstance(AbilityData data, AbilityInstanceData instanceData) 
-            : base(data, instanceData)
+        public RechargeableAbilityInstance(AbilityData data, AbilityInstanceData instanceData, 
+            Queue<ICanGenerateEffect> pendingEffects) : base(data, instanceData, pendingEffects)
         {
         }
 
@@ -20,9 +23,9 @@ namespace Merge.Board.Abilities
             {
                 InstanceData.RechargeTimerElapsed += deltaTime;
                 var interval = rechargeTimerCondition.IntervalSeconds;
-                if (rechargeTimerCondition.IntervalSeconds >= interval)
+                if (InstanceData.RechargeTimerElapsed >= interval)
                 {
-                    rechargeTimerCondition.IntervalSeconds -= interval;
+                    InstanceData.RechargeTimerElapsed -= interval;
                     InstanceData.CurrentCharges += 1;
                     InstanceData.CurrentCharges = InstanceData.CurrentCharges.Clamp(0, Data.ChargesCapacity);
                 }
@@ -32,7 +35,7 @@ namespace Merge.Board.Abilities
         
         protected override bool CheckActivationRequirements()
         {
-            return InstanceData.CurrentCharges >= 0 && base.CheckActivationRequirements();
+            return InstanceData.CurrentCharges > 0 && base.CheckActivationRequirements();
         }
     }
 }

@@ -6,8 +6,8 @@ namespace Merge.Session
 {
     public interface IPieceFactory
     {
-        IEnumerable<PieceInstance> Create(PieceData[] pieces);
-        PieceInstance Create(PieceData pieceData);
+        IEnumerable<PieceInstance> Create(PieceData[] pieces, Queue<ICanGenerateEffect> pendingEffects);
+        PieceInstance Create(PieceData pieceData, Queue<ICanGenerateEffect> pendingEffects);
     }
     
     public class PieceFactory : IPieceFactory
@@ -19,19 +19,19 @@ namespace Merge.Session
             this.dataStorage = dataStorage;
         }
 
-        public IEnumerable<PieceInstance> Create(PieceData[] pieces)
+        public IEnumerable<PieceInstance> Create(PieceData[] pieces, Queue<ICanGenerateEffect> pendingEffects)
         {
             foreach (var pieceData in pieces)
             {
-                yield return Create(pieceData);
+                yield return Create(pieceData, pendingEffects);
             }
         }
 
-        public PieceInstance Create(PieceData data)
+        public PieceInstance Create(PieceData data, Queue<ICanGenerateEffect> pendingEffects)
         {
             var pieceData = dataStorage.GetPiece(data.Id);
             var instanceData = new PieceInstanceData(data.Id);
-            var piece = new PieceInstance(pieceData, instanceData);
+            var piece = new PieceInstance(pieceData, instanceData, pendingEffects);
             return piece;
         }
     }

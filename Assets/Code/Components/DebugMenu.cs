@@ -7,6 +7,13 @@ public class DebugMenu : MonoBehaviour
     [SerializeField]
     private SessionDirector session;
 
+    private float elapsed;
+
+    public void Update()
+    {
+        elapsed += Time.deltaTime;
+    }
+
     public void OnGUI()
     {
         if (!session)
@@ -19,15 +26,9 @@ public class DebugMenu : MonoBehaviour
             if (GUILayout.Button("Restart"))
             {
                 session.Restart();
+                elapsed = 0;
             }
-            if (GUILayout.Button("Spawn smth somewhere"))
-            {
-                
-            }
-            if (GUILayout.Button("Clear"))
-            {
-                
-            }
+            GUILayout.TextArea($"Elapsed: {elapsed:0.00}");
         }
         GUILayout.EndVertical();
     }

@@ -1,4 +1,7 @@
-﻿namespace Merge.Board
+﻿using System.Collections.Generic;
+using Merge.Session;
+
+namespace Merge.Board
 {
     public interface ICell
     {

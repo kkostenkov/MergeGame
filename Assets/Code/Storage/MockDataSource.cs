@@ -55,7 +55,7 @@ namespace Merge.Storage
                                 IntervalSeconds = 0, // ASAP
                             },
                             SpawnId = "B_1",
-                            InitialChargesCount = 1,
+                            InitialChargesCount = 0,
                             ChargesCapacity = 2,
                             RechargeCondition = new TimerCondition()
                             {
@@ -75,7 +75,7 @@ namespace Merge.Storage
                     "B_1",
                     new PieceViewSettings()
                     {
-                        Color = "#102030FF",
+                        Color = "#207DDBFF",
                         Codename = "B_1"
                     }
                 },

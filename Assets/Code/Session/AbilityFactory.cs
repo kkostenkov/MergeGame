@@ -1,11 +1,12 @@
-﻿using Merge.Board.Abilities;
+﻿using System.Collections.Generic;
+using Merge.Board.Abilities;
 
 namespace Merge.Session
 {
     public static class AbilityFactory
     {
         public static AbilityInstance CreateAbility(AbilityData abilityData, 
-            AbilityInstanceData abilityInstanceData)
+            AbilityInstanceData abilityInstanceData, Queue<ICanGenerateEffect> pendingEffects)
         {
             AbilityInstance newAbility;
             switch (abilityData)
@@ -16,7 +17,7 @@ namespace Merge.Session
                     {
                         abilityInstanceData = new ProducerAbilityInstanceData() {DataId = abilityData.Id};
                     }
-                    newAbility = new ProducerAbilityInstance(abilityData, abilityInstanceData);
+                    newAbility = new ProducerAbilityInstance(abilityData, abilityInstanceData, pendingEffects);
                     break;
                 }
                 case RechargeableAbilityData rechargable:
@@ -25,7 +26,7 @@ namespace Merge.Session
                     {
                         abilityInstanceData = new RechargeableAbilityInstanceData() {DataId = abilityData.Id};
                     }
-                    newAbility = new RechargeableAbilityInstance(abilityData, abilityInstanceData);
+                    newAbility = new RechargeableAbilityInstance(abilityData, abilityInstanceData, pendingEffects);
                     break;
                 }
                 default:
@@ -34,7 +35,7 @@ namespace Merge.Session
                     {
                         abilityInstanceData = new AbilityInstanceData() {DataId = abilityData.Id};
                     }
-                    newAbility = new AbilityInstance(abilityData, abilityInstanceData); 
+                    newAbility = new AbilityInstance(abilityData, abilityInstanceData, pendingEffects); 
                     break;
                 }
             }

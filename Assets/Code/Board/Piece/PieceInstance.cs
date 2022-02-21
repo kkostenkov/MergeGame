@@ -13,17 +13,20 @@ namespace Merge.Board
         private PieceInstanceData instanceData;
         private List<AbilityInstance> abilities = new List<AbilityInstance>(); 
         
-        public PieceInstance(PieceData data, PieceInstanceData instanceData)
+        public PieceInstance(PieceData data, PieceInstanceData instanceData, Queue<ICanGenerateEffect> pendingEffects)
         {
             this.data = data;
             this.instanceData = instanceData;
 
-            foreach (var abilityData in data.Abilities)
+            if (data.Abilities != null)
             {
-                var dataId = abilityData.Id;
-                instanceData.Abilities.TryGetValue(dataId, out var abilityInstanceData);
-                var ability = AbilityFactory.CreateAbility(abilityData, abilityInstanceData);
-                abilities.Add(ability);
+                foreach (var abilityData in data.Abilities)
+                {
+                    var dataId = abilityData.Id;
+                    instanceData.Abilities.TryGetValue(dataId, out var abilityInstanceData);
+                    var ability = AbilityFactory.CreateAbility(abilityData, abilityInstanceData, pendingEffects);
+                    abilities.Add(ability);
+                }
             }
         }
 
