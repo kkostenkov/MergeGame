@@ -82,7 +82,7 @@ namespace Merge.Views.Board
             {
                 var cellView = GameObject.Instantiate(
                     cellPrefab, Vector3.zero, Quaternion.identity, spawnRoot);
-                var currentViewIndex = CellViews.Count + 1;
+                var currentViewIndex = CellViews.Count;
                 var coords = CellCoordinates.CellIndexToCoords(currentViewIndex, width);
                 cellView.Init(coords, dataStorage);
                 CellViews[coords] = cellView;

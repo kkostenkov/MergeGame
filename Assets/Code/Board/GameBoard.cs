@@ -69,6 +69,7 @@ namespace Merge.Board
 #region IGameBoardDIrector
         void IGameBoardDirector.PrepareNewSession(string sessionSettingsId)
         {
+            updatables.Clear();
             RemoveAllPieces();
             var sessionSettings = dataStorage.GetSessionSettings(sessionSettingsId);
             
